@@ -1,5 +1,8 @@
 # 0 Set up ---------------------------------------------------------------------
-library(ggplot2)
+library(ggplot2) # for creating plots
+library(car) # for Levene's test
+library(AICcmodavg) # for Akaike information criterion (AIC) test for models
+
 #setwd("C:/Users/El Richardson/OneDrive - Lancaster University/Biomedicine/Year 
   #3/387 Project/Lab work")
 
@@ -123,7 +126,7 @@ subset_list <- list(
 # Creating a new data frame for statistical results
 length(subset_list)
 stats_df <- data.frame(matrix(ncol = 5, nrow = 18))
-colnames(stats_df) <- c("test", "mean", "se", "shapiro_p", "normal_h0")
+colnames(stats_df) <- c("test", "mean", "se", "shapiro_p", "h0_accept")
 
 # Finding means, standard deviations, and normality of data subsets
 se <- function(x) sd(x)/sqrt(length(x)) # creating a standard error function
@@ -152,8 +155,8 @@ for(i in 1:length(subset_list)){
     geom_density(colour = "cornflowerblue", fill = alpha("cornflowerblue", 0.3)) + 
     theme_minimal() + 
     ylab("Density") + xlab("Area Covered by Microglia %")
-  ggsave(plot = plot, filename = paste0("Graphs/", name, ".png"), width = 6.25, 
-        height = 5)
+  #ggsave(plot = plot, filename = paste0("Graphs/", name, ".png"), width = 6.25, 
+   #     height = 5)
 }
 
 # Creating and saving mean/standard error plots
@@ -215,4 +218,53 @@ threeway_dietsexregion_plot <-
 
 
 # 4 Significance Testing -------------------------------------------------------
+# One way testing: diet
+leveneTest(percent_area_adjusted ~ diet, data = data) # 0.272 equal variance
 
+wilcox.test(subset_list[["control"]], subset_list[["test"]], 
+            alternative = "two.sided", exact = FALSE)
+
+# Two way testing (both additive and interactive models): diet and sex:
+#leveneTest(percent_area_adjusted ~ diet*sex, data = data)
+# Archived since apprently one/two way ANOVAs are robust to variance.
+twoway_test_sex <- aov(percent_area_adjusted ~ diet+sex, data = data)
+summary(twoway_test_sex)
+twoway_test_sex_interaction <- aov(percent_area_adjusted ~ diet*sex, 
+                                   data = data)
+summary(twoway_test_sex)
+
+# Two way testing (both additive and interactive models): diet and region
+twoway_test_region <- aov(percent_area_adjusted ~ diet+region, data = data)
+summary(twoway_test_region)
+twoway_test_region_interaction <- aov(percent_area_adjusted ~ diet*region, 
+                                      data = data)
+summary(twoway_test_region)
+
+# Three way testing (both additive and interactive models): diet, sex and region
+threeway_test <- aov(percent_area_adjusted ~ diet+region+sex, data = data)
+summary(threeway_test)
+threeway_test_rsinteraction <- aov(percent_area_adjusted ~ diet+region*sex, 
+                                   data = data)
+summary(threeway_test)
+threeway_test_drinteraction <- aov(percent_area_adjusted ~ diet*region+sex, 
+                                   data = data)
+summary(threeway_test)
+threeway_test_interaction <- aov(percent_area_adjusted ~ diet*region*sex, 
+                                 data = data)
+summary(threeway_test)
+
+# Comparing different models created by ANOVA to see which is the best fit
+model_set <- list(twoway_test_sex, twoway_test_sex_interaction, 
+                  twoway_test_region, twoway_test_region_interaction,
+                  threeway_test, threeway_test_rsinteraction, 
+                  threeway_test_drinteraction,threeway_test_interaction)
+
+model_names <- c("twoway_test_sex", "twoway_test_sex_interaction", 
+                 "twoway_test_region", "twoway_test_region_interaction",
+                 "threeway_test", "threeway_test_rsinteraction", 
+                 "threeway_test_drinteraction","threeway_test_interaction")
+
+aictab(model_set, modnames = model_names) # "twoway_test_sex" is the best fit
+
+
+# 5 Post-hoc interpretation of significance values -----------------------------
