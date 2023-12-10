@@ -2,6 +2,9 @@
 library(ggplot2) # for creating plots
 library(car) # for Levene's test
 library(AICcmodavg) # for Akaike information criterion (AIC) test for models
+library(MHTdiscrete) # for Sidak post-hoc p-value adjustment
+library(gridExtra) # allows multiple graphs to be arranged nicely in one image
+
 
 #setwd("C:/Users/El Richardson/OneDrive - Lancaster University/Biomedicine/Year 
   #3/387 Project/Lab work")
@@ -273,8 +276,8 @@ aictab(model_set, modnames = model_names) # "twoway_test_sex" is the best fit
 # This means that sex and diet affect microglia coverage in additive manner
 
 
-# 5 Post-hoc interpretation of significance values -----------------------------
-TukeyHSD(twoway_test_sex)
+# 5 Post-hoc correction of significance values --=------------------------------
+Sidak.p.adjust(p = c(0.000488, 0.000283), alpha = 0.05) # twoway_sex p-values
 
 # 6 Re-plot for paper ----------------------------------------------------------
 significant_box_plot <- 
@@ -289,6 +292,28 @@ significant_box_plot <-
   theme_bw()
 #ggsave(plot = significant_box_plot, filename = 
  #       "Graphs/significant box plot.png", width = 6.25, height = 5)
+
+MinMeanSEMMax <- function(x) {
+  v <- c(min(x), mean(x) - sd(x)/sqrt(length(x)), mean(x), mean(x) + 
+           sd(x)/sqrt(length(x)), max(x))
+  names(v) <- c("ymin", "lower", "middle", "upper", "ymax")
+  v
+}
+
+significant_box_plot_se <- 
+  data |>
+  ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
+  stat_summary(fun.data=MinMeanSEMMax, geom="boxplot", 
+               position=position_dodge(0.8)) +
+  geom_point(position=position_jitterdodge(0.05)) + 
+  guides(fill=guide_legend(title="Offspring Sex")) +
+  scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
+  scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24), 
+                     limits = c(0, 23), expand = expansion(mult = c(0, 0.05))) + 
+  xlab("Paternal Diet") + ylab("Microglia Coverage (%)")+
+  theme_bw()
+#ggsave(plot = significant_box_plot_se, filename = 
+ #      "Graphs/significant box plot se.png", width = 6.25, height = 5)
 
 significant__plot_df <- stats_df[3:6,]
 significant__plot_df$sex <- c("male", "female", "male", "female")
