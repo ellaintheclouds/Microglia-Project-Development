@@ -24,7 +24,7 @@ for(i in 1:nrow(data)){
   data$region[[i]] <- data$split[[i]][2]
 }
 
-# Sex and diet (unbound)
+# sex and diet (unbound)
 data$sex <- NA
 data$diet <- NA 
 
@@ -51,7 +51,7 @@ for(i in 1:nrow(data)){
   }
 }
 
-# Quantifying variability in light between the two microscopy sessions-----
+# Quantifying variability in light between the two microscopy sessions
 # This is done through comparison of data obtained from capturing an image of 
 # the same section of the same sample in both sessions
 day_1_control <- data[data$file_name == 
@@ -148,7 +148,7 @@ for(i in 1:length(subset_list)){
     stats_df[[5]][i] <- FALSE
   }
   
-  colnames(subset_df) <- "percent"
+  colnames(subset_df) <- "percent" # (allows ggplot to plot varying columns)
   
   plot <- # Creating plots to display the distribution of the subset data
     ggplot(data = subset_df, mapping = aes(x = percent)) + 
@@ -174,13 +174,13 @@ oneway_diet_plot <-
 
 twoway_dietsex_plot <- 
   stats_df[3:6,] |>
-  ggplot(aes(x = test, y = mean)) +
+  ggplot(aes(x = test, y = mean,)) +
   geom_bar(stat = "identity", width = 0.5, fill = "cornflowerblue") +
   geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1)) + 
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) + 
   scale_x_discrete(labels=c("C/C Female", "C/C Male", "HF/C Female", 
                             "HF/C Male")) + 
-  xlab("Paternal Diet and Offspring Sex") + ylab("Mean Microglia Coverage (%)")+
+  xlab("Paternal Diet and Offspring sex") + ylab("Mean Microglia Coverage (%)")+
   theme_bw()
 #ggsave(plot = twoway_dietsex_plot, filename = 
  #        "Graphs/comparison twoway diet sex.png", width = 6.25, height = 5)
@@ -265,6 +265,41 @@ model_names <- c("twoway_test_sex", "twoway_test_sex_interaction",
                  "threeway_test_drinteraction","threeway_test_interaction")
 
 aictab(model_set, modnames = model_names) # "twoway_test_sex" is the best fit
+# This means that sex and diet affect microglia coverage in additive manner
 
 
 # 5 Post-hoc interpretation of significance values -----------------------------
+TukeyHSD(twoway_test_sex)
+
+# 6 Re-plot for paper ----------------------------------------------------------
+significant_box_plot <- 
+  data |>
+  ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
+  geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+  guides(fill=guide_legend(title="Offspring Sex")) +
+  scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.05))) + 
+  xlab("Paternal Diet") + ylab("Microglia Coverage (%)")+
+  theme_bw()
+#ggsave(plot = significant_box_plot, filename = 
+ #       "Graphs/significant box plot.png", width = 6.25, height = 5)
+
+significant__plot_df <- stats_df[3:6,]
+significant__plot_df$sex <- c("male", "female", "male", "female")
+significant__plot_df$diet <- c("C/C", "C/C", "HF/C", "HF/C")
+
+significant_bar_plot <- 
+  significant__plot_df |>
+  ggplot(aes(x = diet, y = mean, fill = sex)) +
+  geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
+  guides(fill=guide_legend(title="Offspring Sex")) +
+  scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
+  geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
+                position=position_dodge(.5)) + 
+  scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14), 
+                     expand = expansion(mult = c(0, 0.05))) + 
+  xlab("Paternal Diet") + ylab("Mean Microglia Coverage (%)")+
+  theme_bw()
+#ggsave(plot = significant_bar_plot, filename = 
+ #       "Graphs/significant bar plot.png", width = 6.25, height = 5)
