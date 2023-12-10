@@ -80,6 +80,11 @@ for(i in 1:nrow(data)){
 
 data$percent_area_adjusted <- as.numeric(data$percent_area_adjusted)
 
+# Creating a new data frame to export and include in paper
+export_df <- data[c("animal", "diet", "sex", "region", "count", "total_area", 
+                    "average_size", "percent_area", "percent_area_adjusted")]
+#write.csv(export_df, "processed data for paper.csv", row.names = FALSE)
+
 
 # 3 Plot -----------------------------------------------------------------------
 # Creating subsets of the data that I want to look at
