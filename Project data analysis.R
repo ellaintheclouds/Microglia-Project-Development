@@ -5,7 +5,6 @@ library(AICcmodavg) # for Akaike information criterion (AIC) test for models
 library(MHTdiscrete) # for Sidak post-hoc p-value adjustment
 library(gridExtra) # allows multiple graphs to be arranged nicely in one image
 
-
 #setwd("C:/Users/El Richardson/OneDrive - Lancaster University/Biomedicine/Year 
   #3/387 Project/Lab work")
 
@@ -333,3 +332,11 @@ significant_bar_plot <-
   theme_bw()
 #ggsave(plot = significant_bar_plot, filename = 
  #       "Graphs/significant bar plot.png", width = 6.25, height = 5)
+
+# Arranging two plots in the same image
+significant_box_plot <- significant_box_plot + theme(legend.position = "none")
+
+combined <- grid.arrange(significant_box_plot, significant_bar_plot, 
+          ncol = 2, nrow = 1)
+#ggsave(plot = combined, filename = 
+ #      "Graphs/significant combined plot.png", width = 10, height = 5)
