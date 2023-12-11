@@ -159,8 +159,8 @@ for(i in 1:length(subset_list)){
   
   plot <- # Creating plots to display the distribution of the subset data
     ggplot(data = subset_df, mapping = aes(x = percent)) + 
-    geom_density(colour = "cornflowerblue", fill = alpha("cornflowerblue", 0.3)) + 
-    theme_minimal() + 
+    geom_density(colour = "cornflowerblue", fill = alpha("cornflowerblue", 0.3)) 
+  + theme_minimal() + 
     ylab("Density") + xlab("Area Covered by Microglia %")
   #ggsave(plot = plot, filename = paste0("Graphs/", name, ".png"), width = 6.25, 
    #     height = 5)
@@ -278,7 +278,9 @@ aictab(model_set, modnames = model_names) # "twoway_test_sex" is the best fit
 # 5 Post-hoc correction of significance values --=------------------------------
 Sidak.p.adjust(p = c(0.000488, 0.000283), alpha = 0.05) # twoway_sex p-values
 
+
 # 6 Re-plot for paper ----------------------------------------------------------
+# Box plot to show distribution
 significant_box_plot <- 
   data |>
   ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
@@ -292,7 +294,8 @@ significant_box_plot <-
 #ggsave(plot = significant_box_plot, filename = 
  #       "Graphs/significant box plot.png", width = 6.25, height = 5)
 
-MinMeanSEMMax <- function(x) {
+# Box plot with mean and standard error
+MinMeanSEMMax <- function(x) { # creating a custom function to plot this
   v <- c(min(x), mean(x) - sd(x)/sqrt(length(x)), mean(x), mean(x) + 
            sd(x)/sqrt(length(x)), max(x))
   names(v) <- c("ymin", "lower", "middle", "upper", "ymax")
@@ -314,6 +317,7 @@ significant_box_plot_se <-
 #ggsave(plot = significant_box_plot_se, filename = 
  #      "Graphs/significant box plot se.png", width = 6.25, height = 5)
 
+# Bar graph showing mean and standard error
 significant__plot_df <- stats_df[3:6,]
 significant__plot_df$sex <- c("male", "female", "male", "female")
 significant__plot_df$diet <- c("C/C", "C/C", "HF/C", "HF/C")
