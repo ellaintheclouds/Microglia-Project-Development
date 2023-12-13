@@ -304,12 +304,13 @@ for(i in 1:nrow(data)){ # Adding extra column to allow multiple comparisons
     as.character()
 }
 
-pairwise.t.test(data$percent_area_adjusted,  data$sex_diet, p.adj='bonferroni')
-#             femaleC/C femaleHF/C maleC/C
-#femaleHF/C   0.6622    -          -      
-#  maleC/C    0.0033    1.8e-05    -      
-#  maleHF/C   1.0000    0.4642     0.0057 
-
+pairwise.wilcox.test(data$percent_area_adjusted,  data$sex_diet, paired = FALSE,
+                     p.adj = "bonferroni", alternative = "two.sided", 
+                     exact = FALSE)
+#           femaleC/C femaleHF/C maleC/C
+#femaleHF/C 1.00000   -          -      
+#maleC/C    0.00022   0.00022    -      
+#maleHF/C   1.00000   1.00000    0.03065
 
 # 6 Plots ----------------------------------------------------------------------
 # Creating and saving mean/standard error plots
@@ -447,7 +448,7 @@ significant_bar_plot_sex <-
   ggplot(aes(x = diet, y = mean, fill = sex)) +
   geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
   geom_signif(stat = "identity",
-              aes(x = 0.8, xend = 1.2, y = 12, yend = 12, annotation = "**")) + 
+              aes(x = 0.8, xend = 1.2, y = 12, yend = 12, annotation = "***")) + 
     guides(fill=guide_legend(title="Offspring Sex")) +
   scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
   geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
@@ -464,7 +465,7 @@ significant_bar_plot_diet <-
   ggplot(aes(x = sex, y = mean, fill = diet)) +
   geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
   geom_signif(stat = "identity",
-              aes(x = 1.8, xend = 2.2, y = 12, yend = 12, annotation = "**")) + 
+              aes(x = 1.8, xend = 2.2, y = 9, yend = 9, annotation = "*")) + 
   guides(fill=guide_legend(title="Paternal Diet")) +
   scale_fill_manual(values = c("#6185B4", "#B461AE")) + 
   geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
