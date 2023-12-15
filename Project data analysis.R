@@ -177,13 +177,13 @@ for(i in 1:length(subset_list)){
 # One way testing: diet, given region (non-parametric)
 leveneTest(percent_area_adjusted ~ diet, 
            data = data[data$region == "ctx",]) # p = 0.2766 equal variance
-wilcox.test(subset_list[["control_ctx"]], subset_list[["test"]], 
-            alternative = "two.sided", exact = FALSE) # p-value = 0.002526 **
+wilcox.test(subset_list[["control_ctx"]], subset_list[["test_ctx"]], 
+            alternative = "two.sided", exact = FALSE) # p-value = 0.02255 *
 
 leveneTest(percent_area_adjusted ~ diet, 
            data = data[data$region == "cpu",]) # p = 0.7433 equal variance
-wilcox.test(subset_list[["control_cpu"]], subset_list[["test"]], 
-            alternative = "two.sided", exact = FALSE) # p-value = 0.002526 **
+wilcox.test(subset_list[["control_cpu"]], subset_list[["test_cpu"]], 
+            alternative = "two.sided", exact = FALSE) # p-value = 0.06896 NS
 
 # One way testing: sex, given region (non-parametric)
 leveneTest(percent_area_adjusted ~ sex, 
@@ -359,43 +359,41 @@ pairwise.wilcox.test(data$percent_area_adjusted,
 # Nothing was significant likely due to correction of many groups
 
 
-# 6 Plots ----------------------------------------------------------------------
+# 6 Bar Plots ----------------------------------------------------------------------
 # One-way comparison -----
-(# Diet (cortex)
+grob1a <- (# Diet (cortex)
   stats_df[3:4, ] |> 
   ggplot(aes(x = test, y = mean)) +
     geom_bar(stat = "identity", width = 0.5, fill = "cornflowerblue") +
     geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1)) +
     geom_signif(comparisons = list(c("control_ctx", "test_ctx")), 
-                annotation = "**") + 
+                annotation = "*") + 
     scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12),
                        expand = expansion(mult = c(0, 0.05))) +
     ggtitle("Cortex") +
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
     theme_bw()
-  ) |>
+  ) #|>
   #ggsave(filename = "Graphs/oneway comparison/diet (cortex).png",              #
   #       width = 5, height = 5)
 
-(# Diet (striatum)
+grob1b <- (# Diet (striatum)
   stats_df[5:6, ] |> 
     ggplot(aes(x = test, y = mean)) +
     geom_bar(stat = "identity", width = 0.5, fill = "cornflowerblue") +
     geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1)) +
-    geom_signif(comparisons = list(c("control_cpu", "test_cpu")), 
-                annotation = "**") + 
     scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12),
                        expand = expansion(mult = c(0, 0.05))) +
     ggtitle("Striatum") +
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
     theme_bw()
-) |>
+) #|>
   #ggsave(filename = "Graphs/oneway comparison/diet (striatum).png",              #
   #       width = 5, height = 5)
     
-  (# Sex (cortex)
+  grob2a <- (# Sex (cortex)
     stats_df[7:8, ] |> 
       ggplot(aes(x = test, y = mean)) +
       geom_bar(stat = "identity", width = 0.5, fill = "cornflowerblue") +
@@ -408,11 +406,11 @@ pairwise.wilcox.test(data$percent_area_adjusted,
       xlab("Sex") + ylab("Mean Microglia Coverage (%)") +
       scale_x_discrete(labels=c("Female", "Male")) + 
       theme_bw()
-  ) |>
+  ) #|>
   #ggsave(filename = "Graphs/oneway comparison/sex (cortex).png",              #
   #       width = 5, height = 5)
   
-  (# Sex (striatum)
+  grob2b <- (# Sex (striatum)
     stats_df[9:10, ] |> 
       ggplot(aes(x = test, y = mean)) +
       geom_bar(stat = "identity", width = 0.5, fill = "cornflowerblue") +
@@ -425,7 +423,7 @@ pairwise.wilcox.test(data$percent_area_adjusted,
       xlab("Sex") + ylab("Mean Microglia Coverage (%)") +
       scale_x_discrete(labels=c("Female", "Male")) + 
       theme_bw()
-  ) |>
+  ) #|>
   #ggsave(filename = "Graphs/oneway comparison/sex (striatum).png",              #
   #       width = 5, height = 5)
   
@@ -439,7 +437,7 @@ pairwise.wilcox.test(data$percent_area_adjusted,
       xlab("Region") + ylab("Mean Microglia Coverage (%)") +
       scale_x_discrete(labels=c("Striatium", "Cortex")) + 
       theme_bw()
-  ) |>
+  ) #|>
   #ggsave(filename = "Graphs/oneway comparison/region.png",                     #
   #       width = 5, height = 5)  
   
@@ -450,7 +448,7 @@ stats_df_twoway$sex <- c("male", "female", "male", "female",
 stats_df_twoway$diet <- c("C/C", "C/C", "HF/C", "HF/C",
                           "C/C", "C/C", "HF/C", "HF/C")
 
-(# Diet and sex (cortex) grouped by diet
+grob3a <- (# Diet and sex (cortex) grouped by diet
   stats_df_twoway[1:4, ] |> 
     ggplot(aes(x = diet, y = mean, fill = sex)) +
     geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
@@ -466,11 +464,12 @@ stats_df_twoway$diet <- c("C/C", "C/C", "HF/C", "HF/C",
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
     theme_bw()
-) |>
-  ggsave(filename = "Graphs/twoway comparison/diet and sex (cortex).png",              #
-         width = 6.25, height = 5)
+) #|>
+  #ggsave(filename = 
+  #"Graphs/twoway comparison/diet and sex (cortex) grouped by diet.png",
+  #width = 6.25, height = 5)                         
   
-(# Diet and sex (cortex) grouped by sex
+grob3b <- (# Diet and sex (cortex) grouped by sex
   stats_df_twoway[1:4, ] |> 
     ggplot(aes(x = sex, y = mean, fill = diet)) +
     geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
@@ -478,113 +477,275 @@ stats_df_twoway$diet <- c("C/C", "C/C", "HF/C", "HF/C",
                   position=position_dodge(.5)) +
     guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
     scale_fill_manual(values = c("#6185B4", "#B461AE")) + 
-    geom_signif(stat = "identity", aes(x = 1.8, xend = 2.2, y = 10, yend = 10, 
-                                       annotation = "*")) + 
     scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16),
                        expand = expansion(mult = c(0, 0.05))) +
     ggtitle("Cortex") +
     xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("Female", "Male")) + 
     theme_bw()
-) |>
-  ggsave(filename = "Graphs/twoway comparison/diet and sex (cortex).png",              #
-         width = 6.25, height = 5)
+) #|>
+  #ggsave(filename = 
+  #"Graphs/twoway comparison/diet and sex (cortex) grouped by sex.png",          
+  #width = 6.25, height = 5)                                                     
 
+grob3c <- (# Diet and sex (striatum) grouped by diet
+  stats_df_twoway[5:8, ] |> 
+    ggplot(aes(x = diet, y = mean, fill = sex)) +
+    geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
+    geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
+                  position=position_dodge(.5)) +
+    guides(fill=guide_legend(title="Offspring Sex")) +
+    scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
+    geom_signif(stat = "identity", aes(x = 0.8, xend = 1.2, y = 14, yend = 14, 
+                                       annotation = "*")) + 
+    scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16),
+                       expand = expansion(mult = c(0, 0.05))) +
+    ggtitle("Striatum") +
+    xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("C/C", "HF/C")) + 
+    theme_bw()
+)#|>
+  #ggsave(filename = 
+  #      "Graphs/twoway comparison/diet and sex (striatum) grouped by diet .png",#
+  #       width = 6.25, height = 5)
+
+grob3d <- (# Diet and sex (striatum) grouped by sex
+  stats_df_twoway[5:8, ] |> 
+    ggplot(aes(x = sex, y = mean, fill = diet)) +
+    geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
+    geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
+                  position=position_dodge(.5)) +
+    guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
+    scale_fill_manual(values = c("#6185B4", "#B461AE")) + 
+    scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16),
+                       expand = expansion(mult = c(0, 0.05))) +
+    ggtitle("Striatum") +
+    xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("Female", "Male")) + 
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #        "Graphs/twoway comparison/diet and sex (striatum) grouped by sex.png",#
+  #       width = 6.25, height = 5)
   
+stats_df_twoway_ <- stats_df[3:6, ]
+stats_df_twoway_$region <- c("ctx", "ctx", "cpu", "cpu")
+stats_df_twoway_$diet <- c("C/C", "HF/C", "C/C", "HF/C")
+
+grob4a <- (# Diet and region grouped by diet
+  stats_df_twoway_ |> 
+    ggplot(aes(x = diet, y = mean, fill =region)) + 
+    geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
+    geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
+                  position=position_dodge(.5)) +
+    guides(fill=guide_legend(title="Region")) +
+    scale_fill_manual(values = c("#61B499", "#8E61B4")) +
+    scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16),
+                       expand = expansion(mult = c(0, 0.05))) +
+    xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("C/C", "HF/C")) + 
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway comparison/diet and region grouped by diet .png",     #
+  #       width = 6.25, height = 5)
+
+grob4b <- (# Diet and region grouped by region
+  stats_df_twoway_ |> 
+    ggplot(aes(x = region, y = mean, fill =diet)) + 
+    geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
+    geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
+                  position=position_dodge(.5)) +
+    guides(fill=guide_legend(title="Diet")) +
+    scale_fill_manual(values = c("#B4B361", "#B46167")) +
+    scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16),
+                       expand = expansion(mult = c(0, 0.05))) +
+    xlab("Region") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("Striatum", "Cortex")) + 
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway comparison/diet and region grouped by region.png",     #
+  #       width = 6.25, height = 5)
+
+
+# 7 Box Plots ----------------------------------------------------------------------
+# One-way comparison -----
+(# Diet (cortex)
+  data[data$region == "ctx",] |> 
+    ggplot(aes(x = diet, y = percent_area_adjusted)) +
+    geom_boxplot(fill = "cornflowerblue") + geom_point() + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    ggtitle("Cortex") +
+    xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("C/C", "HF/C")) + 
+    theme_bw()
+) #|>
+  #ggsave(filename = "Graphs/oneway box plots/diet (cortex).png",              #
+  #       width = 5, height = 5)
   
+  (# Diet (striatum)
+    data[data$region == "cpu",] |> 
+      ggplot(aes(x = diet, y = percent_area_adjusted)) +
+      geom_boxplot(fill = "cornflowerblue") + geom_point() + 
+      scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+      ggtitle("Striatum") +
+      xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+      scale_x_discrete(labels=c("C/C", "HF/C")) + 
+      theme_bw()
+  )# |>
+  #ggsave(filename = "Graphs/oneway box plots/diet (striatum).png",              #
+  #       width = 5, height = 5)
   
+  (# Sex (cortex)
+    data[data$region == "ctx",] |> 
+      ggplot(aes(x = sex, y = percent_area_adjusted)) +
+      geom_boxplot(fill = "cornflowerblue") + geom_point() + 
+      scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+      ggtitle("Cortex") +
+      xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)") +
+      scale_x_discrete(labels=c("Female", "Male")) + 
+      theme_bw()
+  ) #|>
+  #ggsave(filename = "Graphs/oneway box plots/sex (cortex).png",              #
+  #       width = 5, height = 5)
+  
+  (# Sex (striatum)
+    data[data$region == "cpu",] |> 
+      ggplot(aes(x = sex, y = percent_area_adjusted)) +
+      geom_boxplot(fill = "cornflowerblue") + geom_point() + 
+      scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+      ggtitle("Striatum") +
+      xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)") +
+      scale_x_discrete(labels=c("Female", "Male")) + 
+      theme_bw()
+  ) #|>
+  #ggsave(filename = "Graphs/oneway box plots/sex (striatum).png",              #
+  #       width = 5, height = 5)
+  
+  (# Region
+    data |> 
+      ggplot(aes(x = region, y = percent_area_adjusted)) +
+      geom_boxplot(fill = "cornflowerblue") + geom_point() + 
+      scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+      xlab("Region") + ylab("Mean Microglia Coverage (%)") +
+      scale_x_discrete(labels=c("Striatum", "Cortex")) + 
+      theme_bw()
+  )# |>
+  #ggsave(filename = "Graphs/oneway box plots/region.png",                     #
+  #       width = 5, height = 5)  
+  
+  # Two-way comparison -----
+(# Diet and sex (cortex) grouped by diet
+  data[data$region == "ctx",] |> 
+    ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
+    geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("C/C", "HF/C")) + 
+    scale_fill_manual(values = c("#61B499", "#8E61B4")) +
+    guides(fill=guide_legend(title="Sex")) +
+    ggtitle("Cortex") +
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway box plots/diet and sex (cortex) grouped by diet.png",
+  #       width = 6.25, height = 5)                         
+
+(# Diet and sex (cortex) grouped by sex
+  data[data$region == "ctx",] |> 
+    ggplot(aes(x = sex, y = percent_area_adjusted, fill = diet)) +
+    geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    xlab("Sex") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("Female", "Male")) + 
+    scale_fill_manual(values = c("#6185B4", "#B461AE")) +
+    guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
+    ggtitle("Cortex") +
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway box plots/diet and sex (cortex) grouped by sex.png",          
+  #       width = 6.25, height = 5)                                                     
+
+(# Diet and sex (striatum) grouped by diet
+  data[data$region == "cpu",] |> 
+    ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
+    geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("C/C", "HF/C")) + 
+    scale_fill_manual(values = c("#61B499", "#8E61B4")) +
+    guides(fill=guide_legend(title="Sex")) +
+    ggtitle("Striatum") +
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway box plots/diet and sex (striatum) grouped by diet .png",#
+  #       width = 6.25, height = 5)
+
+(# Diet and sex (striatum) grouped by sex
+  data[data$region == "cpu",] |> 
+    ggplot(aes(x = sex, y = percent_area_adjusted, fill = diet)) +
+    geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    xlab("Sex") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("Female", "Male")) + 
+    scale_fill_manual(values = c("#6185B4", "#B461AE")) +
+    guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
+    ggtitle("Striatum") +
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway box plots/diet and sex (striatum) grouped by sex.png",#
+  #       width = 6.25, height = 5)
+
+(# Diet and region grouped by diet
+  data |> 
+    ggplot(aes(x = diet, y = percent_area_adjusted, fill = region)) +
+    geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("C/C", "HF/C")) + 
+    scale_fill_manual(values = c("#61B499", "#8E61B4")) +
+    guides(fill=guide_legend(title="Region")) +
+    ggtitle("Striatum") +
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway box plots/diet and region grouped by diet .png",     #
+  #       width = 6.25, height = 5)
+
+(# Diet and region grouped by region
+  data |> 
+    ggplot(aes(x = diet, y = percent_area_adjusted, fill = region)) +
+    geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    xlab("Region") + ylab("Mean Microglia Coverage (%)") +
+    scale_x_discrete(labels=c("Striatum", "Cortex")) + 
+    scale_fill_manual(values = c("#B4B361", "#B46167")) +
+    guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
+    ggtitle("Striatum") +
+    theme_bw()
+) #|>
+  #ggsave(filename = 
+  #         "Graphs/twoway box plots/diet and region grouped by region.png",     #
+  #       width = 6.25, height = 5)
 
 
-# 7 Plots for paractical report  -----------------------------------------------
-# Box plot to show distribution
-significant_box_plot <- 
-  data |>
-  ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
-  geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
-  guides(fill=guide_legend(title="Offspring Sex")) +
-  scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
-  scale_y_continuous(
-    expand = expansion(mult = c(0, 0.05))) + 
-  xlab("Paternal Diet") + ylab("Microglia Coverage (%)")+
-  theme_bw()
-ggsave(plot = significant_box_plot, filename =                                  #
-        "Graphs/significant box plot.png", width = 6.25, height = 5)
+# 8 Arranging Images for Figures -----------------------------------------------
+grid.arrange(grob1a, grob1b, ncol = 2, nrow = 1) |>
+ggsave(filename =                                                                #
+      "Graphs/oneway comparison/diet.png", width = 10, height = 5)
 
-# Box plot with mean and standard error
-MinMeanSEMMax <- function(x) { # creating a custom function to plot this
-  v <- c(min(x), mean(x) - sd(x)/sqrt(length(x)), mean(x), mean(x) + 
-           sd(x)/sqrt(length(x)), max(x))
-  names(v) <- c("ymin", "lower", "middle", "upper", "ymax")
-  v
-}
+grid.arrange(grob2a, grob2b, ncol = 2, nrow = 1) |>
+  ggsave(filename =                                                                #
+           "Graphs/oneway comparison/sex.png", width = 10, height = 5)
 
-significant_box_plot_se <- 
-  data |>
-  ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
-  stat_summary(fun.data=MinMeanSEMMax, geom="boxplot", 
-               position=position_dodge(0.8)) +
-  geom_point(position=position_jitterdodge(0.05)) + 
-  guides(fill=guide_legend(title="Offspring Sex")) +
-  scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
-  scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24), 
-                     limits = c(0, 23), expand = expansion(mult = c(0, 0.05))) + 
-  xlab("Paternal Diet") + ylab("Microglia Coverage (%)")+
-  theme_bw()
-ggsave(plot = significant_box_plot_se, filename =                               #
-       "Graphs/significant box plot se.png", width = 6.25, height = 5)
+grid.arrange(grob3a, grob3b, grob3c, grob3d, ncol = 2, nrow = 2) |>
+  ggsave(filename =                                                                #
+           "Graphs/twoway comparison/diet and sex.png", width = 13, height = 10)
 
-# Bar graph showing mean and standard error
-significant__plot_df <- stats_df[7:10,]
-significant__plot_df$sex <- c("male", "female", "male", "female")
-significant__plot_df$diet <- c("C/C", "C/C", "HF/C", "HF/C")
-
-significant_bar_plot_sex <- 
-  significant__plot_df |>
-  ggplot(aes(x = diet, y = mean, fill = sex)) +
-  geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
-  geom_signif(stat = "identity",
-              aes(x = 0.8, xend = 1.2, y = 12, yend = 12, annotation = "***")) + 
-    #guides(fill=guide_legend(title="Offspring Sex")) +
-  scale_fill_manual(values = c("#61B499", "#8E61B4")) + 
-  geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
-                position=position_dodge(.5)) + 
-  scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14), 
-                     expand = expansion(mult = c(0, 0.05))) + 
-  #xlab("Paternal Diet") + ylab("Mean Microglia Coverage (%)")+
-  theme_bw()
-ggsave(plot = significant_bar_plot_sex, filename =                              #
-        "Graphs/significant bar plot sex.png", width = 6.25, height = 5)
-
-significant_bar_plot_diet <- 
-  significant__plot_df |>
-  ggplot(aes(x = sex, y = mean, fill = diet)) +
-  geom_bar(stat = "identity", position=position_dodge(), width = 0.5) +
-  geom_signif(stat = "identity",
-              aes(x = 1.8, xend = 2.2, y =11, yend = 11, annotation = "*")) + 
-  guides(fill=guide_legend(title="Paternal Diet")) +
-  scale_fill_manual(values = c("#6185B4", "#B461AE")) + 
-  geom_errorbar(aes(ymin = mean-se, ymax = mean + se, width = 0.1), 
-                position=position_dodge(.5)) + 
-  scale_y_continuous(breaks = c(2, 4, 6, 8, 10, 12, 14), 
-                     expand = expansion(mult = c(0, 0.05))) + 
-  xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)")+
-  theme_bw()
-ggsave(plot = significant_bar_plot_sex, filename =                              #
-         "Graphs/significant bar plot sex.png", width = 6.25, height = 5)
-
-
-# Arranging two plots in the same image-----
-# Sex and Region
-oneway_sex_plot <- oneway_sex_plot + theme(axis.title.y = element_blank())
-oneway_region_plot <- oneway_region_plot + theme(axis.title.y = element_blank())
-
-combined_oneway <- grid.arrange(oneway_diet_plot, oneway_sex_plot, 
-                                oneway_region_plot, ncol = 3, nrow = 1)
-ggsave(plot = combined_oneway, filename =                                       #
-      "Graphs/significant oneway plot.png", width = 10, height = 5)
-
-# Sex and diet together
-combined_twoway <- grid.arrange(
-  significant_bar_plot_diet, significant_bar_plot_sex, ncol = 2, nrow = 1)
-ggsave(plot = combined_twoway, filename =                                       #
-       "Graphs/significant combined plot.png", width = 10, height = 5)
+grid.arrange(grob4a, grob4b, ncol = 2, nrow = 1) |>
+  ggsave(filename =                                                                #
+           "Graphs/twoway comparison/diet and region.png", width = 13, height = 5)
