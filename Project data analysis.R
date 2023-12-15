@@ -173,7 +173,7 @@ for(i in 1:length(subset_list)){
 }
 
 
-# 4 ONne-way significance Testing ----------------------------------------------
+# 4 One-way significance Testing ----------------------------------------------
 # One way testing: diet, given region (non-parametric)
 leveneTest(percent_area_adjusted ~ diet, 
            data = data[data$region == "ctx",]) # p = 0.2766 equal variance
@@ -189,12 +189,12 @@ wilcox.test(subset_list[["control_cpu"]], subset_list[["test"]],
 leveneTest(percent_area_adjusted ~ sex, 
            data = data[data$region == "ctx",]) # p = 0.589 equal variance 
 wilcox.test(subset_list[["female_ctx"]], subset_list[["male_ctx"]], 
-            alternative = "two.sided", exact = FALSE) # p-value = 0.01657 *
+            alternative = "two.sided", exact = FALSE) # p-value = 0.01529 *
 
 leveneTest(percent_area_adjusted ~ sex, 
            data = data[data$region == "cpu",]) # p = 0.7737 equal variance 
 wilcox.test(subset_list[["female_cpu"]], subset_list[["male_cpu"]], 
-            alternative = "two.sided", exact = FALSE) # p-value = 0.01657 *
+            alternative = "two.sided", exact = FALSE) # p-value = 0.02258 *
 
 # One way testing: region (non-parametric)
 leveneTest(percent_area_adjusted ~ region, 
@@ -270,26 +270,6 @@ summary(threeway_test)
 #sex          1  390.8   390.8  14.793 0.000383 ***
 #Residuals   44 1162.3    26.4  
 
-threeway_test_rsinteraction <- aov(percent_area_adjusted ~ diet+region*sex, 
-                                   data = data)
-summary(threeway_test_rsinteraction)
-#             Df Sum Sq Mean Sq F value   Pr(>F)    
-#diet         1  341.8   341.8  12.662 0.000925 ***
-#region       1    8.1     8.1   0.300 0.586426    
-#sex          1  390.8   390.8  14.475 0.000444 ***
-#region:sex   1    1.5     1.5   0.054 0.817715    
-#Residuals   43 1160.9    27.0 
-
-threeway_test_drinteraction <- aov(percent_area_adjusted ~ diet*region+sex, 
-                                   data = data)
-summary(threeway_test_drinteraction)
-#             Df Sum Sq Mean Sq F value   Pr(>F)    
-#diet         1  341.8   341.8  12.680 0.000918 ***
-#region       1    8.1     8.1   0.301 0.586157    
-#sex          1  390.8   390.8  14.496 0.000441 ***
-#diet:region  1    3.1     3.1   0.116 0.735024    
-#Residuals   43 1159.2    27.0  
-
 threeway_test_interaction <- aov(percent_area_adjusted ~ diet*region*sex, 
                                  data = data)
 summary(threeway_test_interaction)
@@ -307,14 +287,12 @@ summary(threeway_test_interaction)
 model_set <- list(twoway_test_sex_ctx, twoway_test_sex_ctx_interaction,
                   twoway_test_sex_cpu, twoway_test_sex_cpu_interaction,
                   twoway_test_region, twoway_test_region_interaction, 
-                  threeway_test, threeway_test_rsinteraction, 
-                  threeway_test_drinteraction,threeway_test_interaction)
+                  threeway_test, threeway_test_interaction)
 
 model_names <- c("twoway_test_sex_ctx", "twoway_test_sex_ctx_interaction",
                  "twoway_test_sex_cpu", "twoway_test_sex_cpu_interaction",
                  "twoway_test_region", "twoway_test_region_interaction",
-                 "threeway_test", "threeway_test_rsinteraction", 
-                 "threeway_test_drinteraction","threeway_test_interaction")
+                 "threeway_test", "threeway_test_interaction")
 
 aictab(model_set, modnames = model_names) 
 #                               K   AICc Delta_AICc AICcWt Cum.Wt      LL
@@ -323,8 +301,6 @@ aictab(model_set, modnames = model_names)
 #twoway_test_sex_cpu             4 159.35      10.66   0.00   1.00  -74.62
 #twoway_test_sex_cpu_interaction 5 160.78      12.09   0.00   1.00  -73.72
 #threeway_test                   5 300.62     151.93   0.00   1.00 -144.60
-#threeway_test_drinteraction     6 303.11     154.42   0.00   1.00 -144.53
-#threeway_test_rsinteraction     6 303.18     154.49   0.00   1.00 -144.57
 #threeway_test_interaction       9 309.30     160.61   0.00   1.00 -143.28
 #twoway_test_region              4 312.03     163.34   0.00   1.00 -151.55
 #twoway_test_region_interaction  5 314.44     165.75   0.00   1.00 -151.50
