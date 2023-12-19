@@ -203,7 +203,7 @@ wilcox.test(subset_list[["ctx"]], subset_list[["cpu"]],
             alternative = "two.sided", exact = FALSE) # p-value = 0.7649 NS
 
 
-# 5 Two-way significance testing------------------------------------------------##########
+# 5 Two-way significance testing------------------------------------------------
 # Two way testing: diet and sex, given region:
 leveneTest(percent_area_adjusted ~ diet*sex, 
            data = data[data$region ==  "ctx",]) # p = 0.02996 * unequal variance
@@ -306,7 +306,7 @@ aictab(model_set, modnames = model_names)
 #twoway_test_region_interaction  5 314.44     165.75   0.00   1.00 -151.50
 
 
-# 6 Post-hoc test and correction of significance values-------------------------##########
+# 6 Post-hoc test and correction of significance values-------------------------
 data$sex_diet <- NA
 data$region_diet <- NA
 data$sex_region_diet <- NA
@@ -407,7 +407,7 @@ grob1b <- (# Diet (striatum)
       scale_x_discrete(labels=c("Female", "Male")) + 
       theme_bw()
   ) #|>
-  #ggsave(filename = "Graphs/oneway comparison/sex (cortex).png",              #
+  #ggsave(filename = "Graphs/oneway comparison/sex (cortex).png",               #
   #       width = 5, height = 5)
   
   grob2b <- (# Sex (striatum)
@@ -547,7 +547,7 @@ grob4a <- (# Diet and region grouped by diet
     theme_bw()
 ) #|>
   #ggsave(filename = 
-  #         "Graphs/twoway comparison/diet and region grouped by diet .png",     #
+  #         "Graphs/twoway comparison/diet and region grouped by diet .png",    #
   #       width = 6.25, height = 5)
 
 grob4b <- (# Diet and region grouped by region
@@ -565,7 +565,7 @@ grob4b <- (# Diet and region grouped by region
     theme_bw()
 ) #|>
   #ggsave(filename = 
-  #         "Graphs/twoway comparison/diet and region grouped by region.png",     #
+  #         "Graphs/twoway comparison/diet and region grouped by region.png",   #
   #       width = 6.25, height = 5)
 
 
@@ -581,7 +581,7 @@ grob4b <- (# Diet and region grouped by region
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
     theme_bw()
 ) #|>
-  #ggsave(filename = "Graphs/oneway box plots/diet (cortex).png",              #
+  #ggsave(filename = "Graphs/oneway box plots/diet (cortex).png",               #
   #       width = 5, height = 5)
   
   (# Diet (striatum)
@@ -594,7 +594,7 @@ grob4b <- (# Diet and region grouped by region
       scale_x_discrete(labels=c("C/C", "HF/C")) + 
       theme_bw()
   )# |>
-  #ggsave(filename = "Graphs/oneway box plots/diet (striatum).png",              #
+  #ggsave(filename = "Graphs/oneway box plots/diet (striatum).png",             #
   #       width = 5, height = 5)
   
   (# Sex (cortex)
@@ -607,7 +607,7 @@ grob4b <- (# Diet and region grouped by region
       scale_x_discrete(labels=c("Female", "Male")) + 
       theme_bw()
   ) #|>
-  #ggsave(filename = "Graphs/oneway box plots/sex (cortex).png",              #
+  #ggsave(filename = "Graphs/oneway box plots/sex (cortex).png",                #
   #       width = 5, height = 5)
   
   (# Sex (striatum)
@@ -632,7 +632,7 @@ grob4b <- (# Diet and region grouped by region
       scale_x_discrete(labels=c("Striatum", "Cortex")) + 
       theme_bw()
   )# |>
-  #ggsave(filename = "Graphs/oneway box plots/region.png",                     #
+  #ggsave(filename = "Graphs/oneway box plots/region.png",                      #
   #       width = 5, height = 5)  
   
   # Two-way comparison -----
@@ -649,7 +649,7 @@ grob4b <- (# Diet and region grouped by region
     theme_bw()
 ) #|>
   #ggsave(filename = 
-  #         "Graphs/twoway box plots/diet and sex (cortex) grouped by diet.png",
+  #         "Graphs/twoway box plots/diet and sex (cortex) grouped by diet.png",#
   #       width = 6.25, height = 5)                         
 
 (# Diet and sex (cortex) grouped by sex
@@ -665,7 +665,7 @@ grob4b <- (# Diet and region grouped by region
     theme_bw()
 ) #|>
   #ggsave(filename = 
-  #         "Graphs/twoway box plots/diet and sex (cortex) grouped by sex.png",          
+  #         "Graphs/twoway box plots/diet and sex (cortex) grouped by sex.png", #        
   #       width = 6.25, height = 5)                                                     
 
 (# Diet and sex (striatum) grouped by diet
@@ -735,17 +735,18 @@ grob4b <- (# Diet and region grouped by region
 
 # 8 Arranging Images for Figures -----------------------------------------------
 grid.arrange(grob1a, grob1b, ncol = 2, nrow = 1) |>
-ggsave(filename =                                                                #
+ggsave(filename =                                                               #
       "Graphs/oneway comparison/diet.png", width = 10, height = 5)
 
 grid.arrange(grob2a, grob2b, ncol = 2, nrow = 1) |>
-  ggsave(filename =                                                                #
+  ggsave(filename =                                                             #
            "Graphs/oneway comparison/sex.png", width = 10, height = 5)
 
 grid.arrange(grob3a, grob3b, grob3c, grob3d, ncol = 2, nrow = 2) |>
-  ggsave(filename =                                                                #
+  ggsave(filename =                                                             #
            "Graphs/twoway comparison/diet and sex.png", width = 13, height = 10)
 
 grid.arrange(grob4a, grob4b, ncol = 2, nrow = 1) |>
-  ggsave(filename =                                                                #
-           "Graphs/twoway comparison/diet and region.png", width = 13, height = 5)
+  ggsave(filename =                                                             #
+           "Graphs/twoway comparison/diet and region.png", width = 13, 
+         height = 5)
