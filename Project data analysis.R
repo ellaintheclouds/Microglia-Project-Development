@@ -463,7 +463,9 @@ grob3a <- (# Diet and sex (cortex) grouped by diet
     ggtitle("Cortex") +
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="none")
+    
 ) #|>
   #ggsave(filename = 
   #"Graphs/twoway comparison/diet and sex (cortex) grouped by diet.png",
@@ -482,7 +484,8 @@ grob3b <- (# Diet and sex (cortex) grouped by sex
     ggtitle("Cortex") +
     xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("Female", "Male")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="none")
 ) #|>
   #ggsave(filename = 
   #"Graphs/twoway comparison/diet and sex (cortex) grouped by sex.png",          
@@ -503,7 +506,8 @@ grob3c <- (# Diet and sex (striatum) grouped by diet
     ggtitle("Striatum") +
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 )#|>
   #ggsave(filename = 
   #      "Graphs/twoway comparison/diet and sex (striatum) grouped by diet .png",#
@@ -522,7 +526,8 @@ grob3d <- (# Diet and sex (striatum) grouped by sex
     ggtitle("Striatum") +
     xlab("Offspring Sex") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("Female", "Male")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #        "Graphs/twoway comparison/diet and sex (striatum) grouped by sex.png",#
@@ -544,7 +549,8 @@ grob4a <- (# Diet and region grouped by diet
                        expand = expansion(mult = c(0, 0.05))) +
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway comparison/diet and region grouped by diet .png",    #
@@ -562,7 +568,8 @@ grob4b <- (# Diet and region grouped by region
                        expand = expansion(mult = c(0, 0.05))) +
     xlab("Region") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("Striatum", "Cortex")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway comparison/diet and region grouped by region.png",   #
@@ -571,7 +578,7 @@ grob4b <- (# Diet and region grouped by region
 
 # 7 Box Plots ----------------------------------------------------------------------
 # One-way comparison -----
-(# Diet (cortex)
+grab1a <- (# Diet (cortex)
   data[data$region == "ctx",] |> 
     ggplot(aes(x = diet, y = percent_area_adjusted)) +
     geom_boxplot(fill = "cornflowerblue") + geom_point() + 
@@ -579,12 +586,13 @@ grob4b <- (# Diet and region grouped by region
     ggtitle("Cortex") +
     xlab("Diet (Paternal/Offspring)") + ylab("Mean Microglia Coverage (%)") +
     scale_x_discrete(labels=c("C/C", "HF/C")) + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="none")
 ) #|>
   #ggsave(filename = "Graphs/oneway box plots/diet (cortex).png",               #
   #       width = 5, height = 5)
   
-  (# Diet (striatum)
+ grab1b <-  (# Diet (striatum)
     data[data$region == "cpu",] |> 
       ggplot(aes(x = diet, y = percent_area_adjusted)) +
       geom_boxplot(fill = "cornflowerblue") + geom_point() + 
@@ -597,7 +605,7 @@ grob4b <- (# Diet and region grouped by region
   #ggsave(filename = "Graphs/oneway box plots/diet (striatum).png",             #
   #       width = 5, height = 5)
   
-  (# Sex (cortex)
+ grab2a <-  (# Sex (cortex)
     data[data$region == "ctx",] |> 
       ggplot(aes(x = sex, y = percent_area_adjusted)) +
       geom_boxplot(fill = "cornflowerblue") + geom_point() + 
@@ -610,7 +618,7 @@ grob4b <- (# Diet and region grouped by region
   #ggsave(filename = "Graphs/oneway box plots/sex (cortex).png",                #
   #       width = 5, height = 5)
   
-  (# Sex (striatum)
+  grab2b <- (# Sex (striatum)
     data[data$region == "cpu",] |> 
       ggplot(aes(x = sex, y = percent_area_adjusted)) +
       geom_boxplot(fill = "cornflowerblue") + geom_point() + 
@@ -636,7 +644,7 @@ grob4b <- (# Diet and region grouped by region
   #       width = 5, height = 5)  
   
   # Two-way comparison -----
-(# Diet and sex (cortex) grouped by diet
+grab3a <- (# Diet and sex (cortex) grouped by diet
   data[data$region == "ctx",] |> 
     ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
     geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
@@ -646,13 +654,14 @@ grob4b <- (# Diet and region grouped by region
     scale_fill_manual(values = c("#61B499", "#8E61B4")) +
     guides(fill=guide_legend(title="Sex")) +
     ggtitle("Cortex") +
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="none")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway box plots/diet and sex (cortex) grouped by diet.png",#
   #       width = 6.25, height = 5)                         
 
-(# Diet and sex (cortex) grouped by sex
+grab3b <- (# Diet and sex (cortex) grouped by sex
   data[data$region == "ctx",] |> 
     ggplot(aes(x = sex, y = percent_area_adjusted, fill = diet)) +
     geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
@@ -662,13 +671,14 @@ grob4b <- (# Diet and region grouped by region
     scale_fill_manual(values = c("#6185B4", "#B461AE")) +
     guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
     ggtitle("Cortex") +
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="none")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway box plots/diet and sex (cortex) grouped by sex.png", #        
   #       width = 6.25, height = 5)                                                     
 
-(# Diet and sex (striatum) grouped by diet
+grab3c <- (# Diet and sex (striatum) grouped by diet
   data[data$region == "cpu",] |> 
     ggplot(aes(x = diet, y = percent_area_adjusted, fill = sex)) +
     geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
@@ -678,13 +688,14 @@ grob4b <- (# Diet and region grouped by region
     scale_fill_manual(values = c("#61B499", "#8E61B4")) +
     guides(fill=guide_legend(title="Sex")) +
     ggtitle("Striatum") +
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway box plots/diet and sex (striatum) grouped by diet .png",#
   #       width = 6.25, height = 5)
 
-(# Diet and sex (striatum) grouped by sex
+grab3d <- (# Diet and sex (striatum) grouped by sex
   data[data$region == "cpu",] |> 
     ggplot(aes(x = sex, y = percent_area_adjusted, fill = diet)) +
     geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
@@ -694,13 +705,14 @@ grob4b <- (# Diet and region grouped by region
     scale_fill_manual(values = c("#6185B4", "#B461AE")) +
     guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
     ggtitle("Striatum") +
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway box plots/diet and sex (striatum) grouped by sex.png",#
   #       width = 6.25, height = 5)
 
-(# Diet and region grouped by diet
+grab4a <- (# Diet and region grouped by diet
   data |> 
     ggplot(aes(x = diet, y = percent_area_adjusted, fill = region)) +
     geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
@@ -710,13 +722,14 @@ grob4b <- (# Diet and region grouped by region
     scale_fill_manual(values = c("#61B499", "#8E61B4")) +
     guides(fill=guide_legend(title="Region")) +
     ggtitle("Striatum") +
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway box plots/diet and region grouped by diet .png",     #
   #       width = 6.25, height = 5)
 
-(# Diet and region grouped by region
+grab4b <- (# Diet and region grouped by region
   data |> 
     ggplot(aes(x = diet, y = percent_area_adjusted, fill = region)) +
     geom_boxplot() + geom_point(position=position_jitterdodge(0.05)) + 
@@ -726,7 +739,8 @@ grob4b <- (# Diet and region grouped by region
     scale_fill_manual(values = c("#B4B361", "#B46167")) +
     guides(fill=guide_legend(title="Diet (Paternal/Offspring)")) +
     ggtitle("Striatum") +
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position="bottom")
 ) #|>
   #ggsave(filename = 
   #         "Graphs/twoway box plots/diet and region grouped by region.png",     #
@@ -734,19 +748,37 @@ grob4b <- (# Diet and region grouped by region
 
 
 # 8 Arranging Images for Figures -----------------------------------------------
-grid.arrange(grob1a, grob1b, ncol = 2, nrow = 1) |>
-ggsave(filename =                                                               #
-      "Graphs/oneway comparison/diet.png", width = 10, height = 5)
+#grid.arrange(grob1a, grob1b, ncol = 2, nrow = 1) |>
+#ggsave(filename =                                                               #
+#      "Graphs/oneway comparison/diet.png", width = 10, height = 5)
 
-grid.arrange(grob2a, grob2b, ncol = 2, nrow = 1) |>
-  ggsave(filename =                                                             #
-           "Graphs/oneway comparison/sex.png", width = 10, height = 5)
+#grid.arrange(grob2a, grob2b, ncol = 2, nrow = 1) |>
+#  ggsave(filename =                                                             #
+#           "Graphs/oneway comparison/sex.png", width = 10, height = 5)
 
-grid.arrange(grob3a, grob3b, grob3c, grob3d, ncol = 2, nrow = 2) |>
-  ggsave(filename =                                                             #
-           "Graphs/twoway comparison/diet and sex.png", width = 13, height = 10)
+#grid.arrange(grob3a, grob3b, grob3c, grob3d, ncol = 2, nrow = 2) |>
+#  ggsave(filename =                                                             #
+#           "Graphs/twoway comparison/diet and sex.png", width = 13, height = 10)
 
-grid.arrange(grob4a, grob4b, ncol = 2, nrow = 1) |>
-  ggsave(filename =                                                             #
-           "Graphs/twoway comparison/diet and region.png", width = 13, 
-         height = 5)
+#grid.arrange(grob4a, grob4b, ncol = 2, nrow = 1) |>
+#  ggsave(filename =                                                             #
+#           "Graphs/twoway comparison/diet and region.png", width = 13, 
+#         height = 5)
+
+
+#grid.arrange(grab1a, grab1b, ncol = 2, nrow = 1) |>
+#  ggsave(filename =                                                               #
+#           "Graphs/oneway box plots/diet.png", width = 10, height = 5)
+
+#grid.arrange(grab2a, grab2b, ncol = 2, nrow = 1) |>
+#  ggsave(filename =                                                             #
+#           "Graphs/oneway box plots/sex.png", width = 10, height = 5)
+
+#grid.arrange(grab3a, grab3b, grab3c, grab3d, ncol = 2, nrow = 2) |>
+#  ggsave(filename =                                                             #
+#           "Graphs/twoway box plots/diet and sex.png", width = 13, height = 10)
+
+#grid.arrange(grab4a, grab4b, ncol = 2, nrow = 1) |>
+#  ggsave(filename =                                                             #
+#           "Graphs/twoway box plots/diet and region.png", width = 13, 
+#         height = 5)
